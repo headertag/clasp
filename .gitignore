@@ -1,0 +1,20 @@
+.DS_Store
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+build/
+dist/
+.coverage
+htmlcov/
+
+# Recordings, renders, and reports stay local.
+*.[mM][tT][sS]
+*.[mM]2[tT][sS]
+*.[mM][pP]4
+*.[mM][oO][vV]
+*.[wW][aA][vV]
+*.sync.json
+work/

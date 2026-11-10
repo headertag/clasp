@@ -4,19 +4,20 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "clasp-sync"
-version = "0.1.0"
-description = "Waveform sync for double-system sound on macOS."
+version = "0.2.0.dev0"
+description = "Waveform sync for double-system sound on Linux and macOS."
 readme = "README.md"
 requires-python = ">=3.11"
 license = {file = "LICENSE"}
 authors = [{name = "Clasp contributors"}]
-keywords = ["audio", "video", "synchronization", "macos", "ffmpeg"]
+keywords = ["audio", "video", "synchronization", "macos", "linux", "ffmpeg"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Environment :: MacOS X",
     "Intended Audience :: End Users/Desktop",
     "License :: OSI Approved :: MIT License",
     "Operating System :: MacOS :: MacOS X",
+    "Operating System :: POSIX :: Linux",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.13",

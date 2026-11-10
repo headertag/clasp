@@ -36,7 +36,7 @@ def check_levels(audio: Path, stream: dict) -> float | None:
                "-c:a", "pcm_f64le", "-f", "null", "-"]
     try:
         result = subprocess.run(command, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
-                                stderr=subprocess.PIPE, timeout=1800, check=False)
+                                stderr=subprocess.PIPE, timeout=None, check=False)
     except (OSError, subprocess.TimeoutExpired) as exc:
         raise ClaspError(f"Could not measure WAV levels: {exc}") from exc
     log = result.stderr.decode("utf-8", errors="replace")

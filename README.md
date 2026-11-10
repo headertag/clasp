@@ -4,7 +4,8 @@
 
 Clasp aligns a separate WAV recording to your camera's reference audio, corrects
 measurable clock drift, and exports a video containing only the external microphone.
-It runs locally on macOS, with a file-picker interface and a command line.
+The command line runs locally on Linux and macOS. The optional file-picker
+interface is currently supported on macOS.
 
 Keep recording reference audio on the camera:
 Clasp uses it to find the match, then leaves it out of the finished file.
@@ -33,6 +34,38 @@ For an existing Python installation, pass its executable to the installer:
 Python 3.11 or newer and FFmpeg/ffprobe must be installed. The file-picker interface
 also needs tkinter for that Python installation. Clasp is distributed as source,
 not a signed, standalone macOS app.
+
+## Linux / SSH setup
+
+On Ubuntu/Debian, install FFmpeg and Python 3.11 or newer:
+
+```sh
+sudo apt-get install ffmpeg python3-venv
+git clone https://github.com/headertag/clasp.git
+cd clasp
+python3 -m venv .venv
+.venv/bin/python -m pip install -e '.[test]'
+.venv/bin/clasp sync camera.MTS microphone.wav -o finished.mp4 --analyze-only
+```
+
+No display, Tk, or GPU is required for the CLI. Rendering currently uses CPU
+FFmpeg/libx264; an NVIDIA GPU is not automatically used.
+
+## Duration and release status
+
+Main removes the input-duration cap, the analysis decoder's 30-minute cutoff,
+and fixed media-command execution deadlines. A healthy long export can run until
+completion. Interrupt with Ctrl-C if needed; existing source files are read-only.
+
+There is **no imposed time limit**, but available RAM, disk, and processing time
+still matter. Analysis currently holds decoded audio and frame timestamps in
+memory, and alignment uses up to 41 checkpoints with a single linear drift model.
+Very long takes or changing recorder drift may need further improvements. This
+change does not claim that arbitrary multi-hour recordings have been validated.
+
+The stable `v0.1.0` tag remains unchanged. Main reports `0.2.0.dev0`; **do not cut
+v0.2.0 until real multi-hour recordings pass Linux alignment and export checks**.
+See [the long-recording validation checklist](docs/long-recording-validation.md).
 
 ## Command line
 
@@ -69,17 +102,17 @@ default. This re-encodes the video only when a trim is needed. Select
 inspect the coverage before exporting. Clasp never fills a gap with camera
 audio. Existing outputs are protected unless you use `--overwrite`.
 
-## Supported in v0.1
+## Supported on main (v0.2 development)
 
 | Input or output | Scope |
 | --- | --- |
 | Camera video | Constant-frame-rate, 8-bit SDR H.264 (`yuv420p`) in `.mts`, `.m2ts`, `.mp4`, or `.mov` |
 | Camera reference audio | Mono or stereo; shared sound from the same take is required |
 | External mic | PCM WAV, including floating-point WAV; mono or stereo |
-| Takes | Continuous recordings, up to 30 minutes each |
+| Takes | Continuous recordings; no imposed duration limit |
 | MP4 export | H.264 video and AAC audio at 320 kb/s |
 | MOV export | H.264 video and lossless ALAC audio |
-| Platform | macOS; other operating systems are outside this release's support scope |
+| Platform | Linux and macOS CLI; macOS file-picker interface |
 
 Clasp uses the first video track that is not cover art and the first audio
 track. The video is copied without
@@ -125,7 +158,7 @@ python -m pip install -e '.[test]'
 python -m pytest
 ```
 
-The macOS CI workflow runs the test suite with Python 3.11 and 3.13. The
+The Linux and macOS CI workflow runs the test suite with Python 3.11 and 3.13. The
 repository contains no personal recordings. See [CONTRIBUTING.md](CONTRIBUTING.md)
 for development and bug-report guidance.
 

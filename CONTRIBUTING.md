@@ -1,6 +1,6 @@
 # Contributing
 
-Clasp starts small: one continuous camera take, one external WAV, and macOS.
+Clasp starts small: one continuous camera take, one external WAV, and Linux/macOS.
 Changes should make that workflow more reliable before expanding format support.
 
 ## Development
@@ -21,7 +21,7 @@ should check the resulting timing or audio provenance, not just command text.
 
 ## Changes and bug reports
 
-- Describe the input formats, macOS version, Python version, and FFmpeg version.
+- Describe the input formats, operating system version, Python version, and FFmpeg version.
 - Include a small, shareable reproduction or instructions to generate one.
 - When sharing a report, inspect it first and remove private filenames or paths.
 - Explain how timing was measured, including the reference time origin and lag sign.

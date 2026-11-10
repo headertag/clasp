@@ -10,7 +10,6 @@ from pathlib import Path
 import numpy as np
 
 ANALYSIS_RATE = 8000
-MAX_DURATION = 1800
 VIDEO_SUFFIXES = {".mts", ".m2ts", ".mov", ".mp4"}
 
 
@@ -32,7 +31,7 @@ def executable(name: str) -> str:
     return found
 
 
-def run(arguments: list[str], *, timeout: int = 1800) -> bytes:
+def run(arguments: list[str], *, timeout: float | None = None) -> bytes:
     try:
         result = subprocess.run(arguments, stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
                                 stderr=subprocess.PIPE, timeout=timeout, check=False)
@@ -62,8 +61,8 @@ def duration(info: dict, stream: dict) -> float:
         seconds = float(value)
     except (TypeError, ValueError) as exc:
         raise ClaspError("Cannot determine media duration.") from exc
-    if not np.isfinite(seconds) or seconds <= 0 or seconds > MAX_DURATION:
-        raise ClaspError("Version 0.1 supports continuous recordings up to 30 minutes long.")
+    if not np.isfinite(seconds) or seconds <= 0:
+        raise ClaspError("Media duration must be finite and greater than zero.")
     return seconds
 
 
@@ -73,7 +72,7 @@ def decode_analysis(path: Path, stream: dict) -> tuple[np.ndarray, int]:
     if channels not in (1, 2):
         raise ClaspError("Version 0.1 supports mono or stereo audio only.")
     raw = run([executable("ffmpeg"), "-v", "error", "-nostdin", "-i", str(path),
-               "-map", f"0:{stream['index']}", "-t", str(MAX_DURATION),
+               "-map", f"0:{stream['index']}",
                "-ar", str(ANALYSIS_RATE), "-ac", str(channels), "-f", "f32le", "pipe:1"])
     samples = np.frombuffer(raw, dtype="<f4").reshape(-1, channels)
     if len(samples) < ANALYSIS_RATE * 3 or not np.isfinite(samples).all():
